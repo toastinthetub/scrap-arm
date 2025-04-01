@@ -1,7 +1,4 @@
+
 // MIT License
 // Copyright (c) 2025 Sam Bazeley
 // See the LICENSE file for more details.
-
-fn main() {
-    println!("Hello, world!");
-}
