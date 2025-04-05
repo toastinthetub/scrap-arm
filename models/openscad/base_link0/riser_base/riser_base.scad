@@ -1,3 +1,5 @@
+use <"../sams_scad_stdlib.scad">;
+
 $fn = 100;
 
 module bolt_circle(num_bolts, circle_radius, hole_diameter, hole_height) {
@@ -18,7 +20,7 @@ module riser_body_diff_cylinder() {
 	}
 }
 
-// upper plate
+// lower plate
 module riser_body_lower() {
 	color("#636363") {
 		union() {
