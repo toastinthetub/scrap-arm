@@ -1,4 +1,4 @@
-use <../base-plate/base_plate.scad>;
+use <../base_plate/base_plate.scad>;
 
 module bolt_circle(num_bolts, circle_radius, hole_diameter, hole_height) {
     for (i = [0:num_bolts-1]) {
