@@ -1,6 +1,6 @@
 $fn = 100;
 
-module base_plate() {
+module plate() {
 	translate([0, 0, (5 / 2)]) {
 		cube([200, 200, 5], center = true);
 	}
@@ -26,14 +26,14 @@ module screw_holes() {
 	}
 }
 
-module assembly() {
+module base_plate() {
 	union() {
 		difference() {
-			base_plate();
+			plate();
 
 			screw_holes();
 		}
 	}
 }
 
-assembly();
+base_plate();

@@ -1,0 +1,4 @@
+FOR BASE:
+	- https://www.mcmaster.com/2010N12/
+	- https://www.mcmaster.com/5454N11/
+	- https://www.mcmaster.com/5454N14/
