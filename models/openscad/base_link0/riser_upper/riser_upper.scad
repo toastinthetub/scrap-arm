@@ -18,37 +18,6 @@ module riser_body_diff_cylinder() {
 	}
 }
 
-module neo_mockup() {
-	cylinder(h = 58.3, r1 = 57 / 2, r2 = 60 / 2, center = true);
-}
-
-// lower plate
-module riser_body_lower() {
-	color("#636363") {
-		union() {
-			difference() {
-				translate([0, 0, (12 / 2)]) {
-					cylinder(h = 12, r1 = 50, r2 = 50, center = true);
-				}
-				translate([0, 0, -0.1]) {
-					bolt_circle(num_bolts = 10, circle_radius = (90 / 2), hole_diameter = 3.3, hole_height = 13.1);
-				}
-				translate([0, 0, -0.1]) {
-					bolt_circle(num_bolts = 6, circle_radius = (57 / 2), hole_diameter = 3.3, hole_height = 13.1);
-				}
-				translate([0, 0, -0.1]) {
-					bolt_circle(num_bolts = 6, circle_radius = (57 / 2), hole_diameter = 5.7, hole_height = 1.65);
-				}
-				riser_body_diff_cylinder();
-
-				translate([0, -65, (58.3 / 2) - .1]) {
-					neo_mockup();
-				}
-			}
-		}
-	}
-}
-
 // upper plate
 module riser_body_higher() {
 	color("#777777") {
@@ -70,8 +39,10 @@ module riser_body_higher() {
 	}
 }
 
-module riser_base() {
+module riser_upper() {
 	union() {
-		riser_body_lower();
+		riser_body_higher();
 	}
 }
+
+riser_upper();
