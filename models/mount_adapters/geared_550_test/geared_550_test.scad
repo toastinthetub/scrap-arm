@@ -15,7 +15,7 @@ module base_helper() {
 			}
 			translate([0, 0, -6]) {
 				rotate([0, 0, 45]) {
-					%bolt_square(num_x = 2, num_y = 2, spacing_x = 30, spacing_y = 30 , hole_diameter = 2.2, hole_height = 12);
+					bolt_square(num_x = 2, num_y = 2, spacing_x = 30, spacing_y = 30 , hole_diameter = 2.2, hole_height = 12);
 				}
 			}
 		}
@@ -30,12 +30,48 @@ module base_helper() {
 
 module base() {
 	union() {
-		base_helper();
+		difference() {
+			base_helper();
+			
+			translate([0, 0, -0.01]) {
+				rotate([0, 0 , 0]) {
+					scale(1.007) nut_trap_circle(4, 42.1 / 2, "m2");
+				}
+			}
+			translate([0, 0, -6]) {
+				rotate([0, 0, 45]) {
+					bolt_square(num_x = 2, num_y = 2, spacing_x = 30, spacing_y = 30 , hole_diameter = 2.2, hole_height = 12);
+				}
+			}
+			translate([0, 0, 2 + (1/2) + 0.01]) {
+				cylinder(h = 1.01, r = 18 / 2, center = true);			
+			}
+		}
 	}
 }
+
+module pillars() {
+	union() {
+		translate([0, 0, 0]) {
+			cube([0, 0, 0,], center = true);
+		}
+		translate([0, 0, 0]) {
+			cube([0, 0, 0,], center = true);
+		}
+		translate([0, 0, 0]) {
+			cube([0, 0, 0,], center = true);
+		}
+		translate([0, 0, 0]) {
+			cube([0, 0, 0,], center = true);
+		}
+
+	}
+}
+
 module geared_550_test() {
 	union() {
 		base();
+		pillars();
 	}
 }
 
