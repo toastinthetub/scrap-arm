@@ -52,19 +52,92 @@ module base() {
 
 module pillars() {
 	union() {
-		translate([0, 0, 0]) {
-			cube([0, 0, 0,], center = true);
+		translate([(38 / 2) - 3/2, (38 / 2) - 3/2, 90 / 2 + base_height]) {
+			cube([3, 3, 90], center = true);
 		}
-		translate([0, 0, 0]) {
-			cube([0, 0, 0,], center = true);
+		translate([-(38 / 2) + 3/2, (38 / 2) - 3/2, 90 / 2 + base_height]) {
+				cube([3, 3, 90], center = true);
 		}
-		translate([0, 0, 0]) {
-			cube([0, 0, 0,], center = true);
+		translate([(38 / 2) - 3/2, -(38 / 2) + 3/2, 90 / 2 + base_height]) {
+			cube([3, 3, 90], center = true);
 		}
-		translate([0, 0, 0]) {
-			cube([0, 0, 0,], center = true);
-		}
+		translate([-(38 / 2) + 3/2, -(38 / 2) + 3/2, 90 / 2 + base_height]) {
+			cube([3, 3, 90], center = true);
+		} 
+	}
+}
 
+module neo_cylindrical_enclosure_holes() {
+	union() {
+		translate([0, 0, 6 / 2]) {
+			translate([0, 0, 0]) {
+				rotate([90, 0, 0]) {
+					%cylinder(h = 100, r = 6 / 2, center = true);
+				}
+			}
+		}
+		translate([0, 0, 6 / 2]) {
+			translate([10, 0, 0]) {
+				rotate([90, 0, 0]) {
+					%cylinder(h = 100, r = 6 / 2, center = true);
+				}
+			}
+		}
+		translate([0, 0, 6 / 2]) {
+			translate([-10, 0, 0]) {
+				rotate([90, 0, 0]) {
+					%cylinder(h = 100, r = 6 / 2, center = true);
+				}
+			}
+		}
+		translate([0, 0, 6 / 2]) {
+			translate([0, 0, 9]) {
+				rotate([90, 0, 0]) {
+					%cylinder(h = 100, r = 6 / 2, center = true);
+				}
+			}
+		}
+	}
+}
+
+module neo_cylindrical_enclosure() {
+	union() {
+		difference() {
+			translate([0, 0, (44.5 / 2) + 3]) {
+				cylinder(h = 44.5, r = 37 / 2, center = true);
+			}
+			translate([0, 0, (44.5 / 2) + 3]) {
+				cylinder(h = 44.7, r = 35 / 2, center = true);
+			}
+			translate([0, 0, 6 / 2]) {
+				translate([0, 0, 0]) {
+					rotate([90, 0, 0]) {
+						%cylinder(h = 100, r = 6 / 2, center = true);
+					}
+				}
+			}
+			translate([0, 0, 6 / 2]) {
+				translate([10, 0, 0]) {
+					rotate([90, 0, 0]) {
+						%cylinder(h = 100, r = 6 / 2, center = true);
+					}
+				}
+			}
+			translate([0, 0, 6 / 2]) {
+				translate([-10, 0, 0]) {
+					rotate([90, 0, 0]) {
+						%cylinder(h = 100, r = 6 / 2, center = true);
+					}
+				}
+			}
+			translate([0, 0, 6 / 2]) {
+				translate([0, 0, 9]) {
+					rotate([90, 0, 0]) {
+						%cylinder(h = 100, r = 6 / 2, center = true);
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -72,6 +145,7 @@ module geared_550_test() {
 	union() {
 		base();
 		pillars();
+		neo_cylindrical_enclosure();
 	}
 }
 
