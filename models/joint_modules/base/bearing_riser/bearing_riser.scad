@@ -7,8 +7,8 @@ $fn = 100;
 
 module bearing_riser_upper() {
 	union() {
-		translate([0, 0, 0]) {
-			
+		translate([0, 0, 5]) {
+			hollow_cylinder(outer_d = 70, inner_d = 40, h = 90);
 		}
 	}
 }
@@ -39,7 +39,7 @@ module bearing_riser() {
 	difference() {
 		union() {
 			bearing_riser_lower();
-			bearing_riser_upper();
+			%bearing_riser_upper();
 		}
 		bearing_riser_diff_cylinder();
 		bearing_riser_screw_holes_DIFF();

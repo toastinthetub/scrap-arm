@@ -1,5 +1,5 @@
 use <samSCAD/samstdlib.scad>
-use <bearing_riser/bearing_riser.scad>
+use <../bearing_riser/bearing_riser.scad>
 
 
 $fn = 100;
@@ -60,8 +60,9 @@ module base_plate() {
 
 			base_plate_outer_bolt_square_DIFF();
 			base_plate_inner_bolt_circle_DIFF();
+			cylinder(h = 12, r = 20, center = true);
 		}
-		translate([0, 0, 5])bearing_riser();
+		translate([0, 0, 5]) bearing_riser();
 	}
 }
 
