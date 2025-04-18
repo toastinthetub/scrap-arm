@@ -35,14 +35,23 @@ module bearing_riser_screw_holes_DIFF() {
 	}
 }
 
+module bearing_riser_upper_screw_holes_DIFF() {
+	union() {
+		translate([0, 0, 90.01]) {
+			bolt_circle(num_bolts = 6, circle_radius = 57 / 2, hole_diameter = 3.2 , hole_height = 5.01);
+		}
+	}
+}
+
 module bearing_riser() {
 	difference() {
 		union() {
 			bearing_riser_lower();
-			%bearing_riser_upper();
+			bearing_riser_upper();
 		}
 		bearing_riser_diff_cylinder();
 		bearing_riser_screw_holes_DIFF();
+		bearing_riser_upper_screw_holes_DIFF();
 	}
 }
 
