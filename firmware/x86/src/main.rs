@@ -1,57 +1,74 @@
-use rusb::{DeviceHandle, GlobalContext, UsbContext};
-use std::time::Duration;
+// socketcan/examples/echo.rs
+//
+// This file is part of the Rust 'socketcan-rs' library.
+//
+// Licensed under the MIT license:
+//   <LICENSE or http://opensource.org/licenses/MIT>
+// This file may not be copied, modified, or distributed except according
+// to those terms.
+//
+// @author Natesh Narain <nnaraindev@gmail.com>
+// @date Jul 05 2022
+//
+//! Listen on a CAN interface and echo any CAN 2.0 data frames back to
+//! the bus.
+//!
+//! The frames are sent back on CAN ID +1.
+//!
+//! You can test send frames to the application like this:
+//!
+//!```text
+//! $ cansend can0 110#00112233
+//! $ cansend can0 110#0011223344556677
+//!```
+//!
 
-const VID: u16 = 0x0483;
-const PID: u16 = 0xa30e;
+use anyhow::Context;
+use embedded_can::{blocking::Can, Frame as EmbeddedFrame};
+use socketcan::{CanFrame, CanSocket, Frame, Socket};
+use std::{
+    env,
+    sync::atomic::{AtomicBool, Ordering},
+    time::Duration,
+};
 
-const ENDPOINT_OUT: u8 = 0x02;
-const ENDPOINT_IN: u8 = 0x81;
+fn frame_to_string<F: Frame>(frame: &F) -> String {
+    let id = frame.raw_id();
 
-fn find_device() -> rusb::Result<DeviceHandle<GlobalContext>> {
-    for device in rusb::devices()?.iter() {
-        let desc = device.device_descriptor()?;
-        if desc.vendor_id() == VID && desc.product_id() == PID {
-            let mut handle = device.open()?;
-            handle.claim_interface(0)?;
-            return Ok(handle);
+    let data_string = frame
+        .data()
+        .iter()
+        .fold(String::new(), |a, b| format!("{} {:02X}", a, b));
+
+    format!("{:08X}  [{}] {}", id, frame.dlc(), data_string)
+}
+
+// --------------------------------------------------------------------------
+
+fn main() -> anyhow::Result<()> {
+    let iface = env::args().nth(1).unwrap_or_else(|| "vcan0".into());
+
+    let mut sock = CanSocket::open(&iface)
+        .with_context(|| format!("Failed to open socket on interface {}", iface))?;
+
+    static QUIT: AtomicBool = AtomicBool::new(false);
+
+    ctrlc::set_handler(|| {
+        QUIT.store(true, Ordering::Relaxed);
+    })
+    .expect("Failed to set ^C handler");
+
+    while !QUIT.load(Ordering::Relaxed) {
+        if let Ok(frame) = sock.read_frame_timeout(Duration::from_millis(100)) {
+            println!("{}", frame_to_string(&frame));
+
+            let new_id = frame.can_id() + 0x01;
+
+            if let Some(echo_frame) = CanFrame::new(new_id, frame.data()) {
+                sock.transmit(&echo_frame)
+                    .expect("Failed to echo received frame");
+            }
         }
-    }
-    Err(rusb::Error::NoDevice)
-}
-
-fn build_command_packet() -> [u8; 12] {
-    // Construct a 12-byte CAN-like packet
-    // ExtID = 0x00150200 for API Class 0x08, Index 0x00, Device ID 0x00
-    let ext_id: u32 = (0b000 << 29) | // Standard Command Type
-        (0x02 << 24) |  // Device Type
-        (0x15 << 16) |  // Manufacturer
-        (0x08 << 10) |  // API Class
-        (0x00 << 6)  |  // API Index
-        (0x00); // Device ID
-
-    let mut packet = [0u8; 12];
-    packet[..4].copy_from_slice(&ext_id.to_le_bytes());
-
-    // Data bytes (example: set motor speed or something)
-    packet[4..12].copy_from_slice(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
-
-    packet
-}
-
-fn main() -> rusb::Result<()> {
-    let handle = find_device()?;
-
-    let packet = build_command_packet();
-
-    println!("Sending packet: {:02x?}", packet);
-
-    let bytes_written = handle.write_bulk(ENDPOINT_OUT, &packet, Duration::from_millis(100))?;
-    println!("Wrote {} bytes to SPARK MAX", bytes_written);
-
-    let mut response = [0u8; 64];
-    match handle.read_bulk(ENDPOINT_IN, &mut response, Duration::from_millis(500)) {
-        Ok(n) => println!("Response: {:02x?}", &response[..n]),
-        Err(e) => println!("No response or error: {}", e),
     }
 
     Ok(())

@@ -4,4 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+anyhow = "1.0.98"
+ctrlc = "3.4.6"
+embedded-can = "0.4.1"
 rusb = "0.9.4"
+socketcan = "3.5.0"

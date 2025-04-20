@@ -62,7 +62,7 @@ module base_plate() {
 			base_plate_inner_bolt_circle_DIFF();
 			cylinder(h = 12, r = 20, center = true);
 		}
-		// translate([0, 0, 5]) bearing_riser();
+		translate([0, 0, 5]) bearing_riser();
 	}
 }
 
