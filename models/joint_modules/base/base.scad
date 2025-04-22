@@ -2,6 +2,10 @@ use <samSCAD/samstdlib.scad>
 use <bearing_riser/bearing_riser.scad>
 use <base_plate/base_plate.scad>
 
+module neo_mockup_diff() {
+	
+}
+
 module base_and_riser() {
 	union() {
 		base_plate();
