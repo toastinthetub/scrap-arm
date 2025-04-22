@@ -32,6 +32,8 @@ module base_plate_inner_bolt_circle_DIFF() {
 	}
 }
 
+/* 
+
 module base_plate_raw() {
 	union() {
 	difference() {
@@ -51,6 +53,25 @@ module base_plate_raw() {
 	}
 }
 
+*/
+
+module base_plate_raw() {
+difference() {
+	union() {
+		translate([0, 0, (5 / 2)]) {
+			hollow_cylinder(
+				outer_d = 240,
+				inner_d = 70,
+				h = 5, 
+				center = true,
+				$fn = 150
+			);
+		}
+	}
+	cylinder(h= 20, r = 35, center = true);
+}
+}
+
 // solid plate with 4 bolt m10x1.5 bolt holes. 
 // maybe i'll make a version with a nut trap in the top.
 module base_plate() {
@@ -62,8 +83,9 @@ module base_plate() {
 			base_plate_inner_bolt_circle_DIFF();
 			cylinder(h = 12, r = 20, center = true);
 		}
-		translate([0, 0, 5]) bearing_riser();
+		*translate([0, 0, 5]) bearing_riser();
 	}
 }
 
 base_plate();
+
