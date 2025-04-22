@@ -1,10 +1,13 @@
 use <samSCAD/samstdlib.scad>
+use <bearing_riser_lower.scad>
+use <bearing_riser_upper.scad>
 
 $fn = 100;
 
 // THIS WILL BE ANCHORED AT Z = 0 SO THAT IT CAN BE
 // CONVENIENTLY TRANSLATED AROUND
 
+/*
 module bearing_riser_upper() {
 	union() {
 		translate([0, 0, 5]) {
@@ -22,6 +25,8 @@ module bearing_riser_lower() {
 		}
 	}
 }
+
+*/
 
 module bearing_riser_diff_cylinder() {
 	translate([0, 0, 0]) {
