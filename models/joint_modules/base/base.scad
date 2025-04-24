@@ -29,33 +29,50 @@ module hollow_cube(v1, v2, v2_translate, center_bool) {
 	
 }
 
-module neo_box_raw() {
-
+module bearing_riser_lower() {
 	union() {
-		translate([100, 100, 0]) 
-			hollow_hex(outer_radius = 120 / 2, wall_thickness = 3, height = 159.5);
-	}
-
-
-	*union() {
 		difference() {
-			translate([0, 0, (159.5 / 2) + 5]) {
-				hollow_cube(v1 = [105, 105, 159.5], v2 = [110, 100, 149.5], v2_translate = [0, 0, -5], center_bool = true);
-			}
-			translate([0, 0, 0]) {
-				//color("red")
-					cube([90, 100, 6], center = true);
+			translate([0, 0, 5/2]) {
+				cylinder(h = 5, r = 50, center = true);
 			}
 		}
-		difference() {
-			translate([0, 0, (159.5 / 2) + 5]) {
-				hollow_cube(v1 = [105, 105, 159.5], v2 = [110, 100, 149.5], v2_translate = [0, 0, -5], center_bool = true);
+	}
+}
+
+module helper_diff_cube() {
+	translate([0, 0, (5/2 + 5)]) {
+		hollow_hex(outer_radius = 41, wall_thickness = 70, height = 8);
+	}
+}
+
+module bearing_riser_screw_holes_DIFF() {
+	translate([0, 0, -1]) {
+		bolt_circle(num_bolts = 10, circle_radius = 90 / 2, hole_diameter = 3.5, hole_height = 100);
+	}
+}
+
+module neo_box_raw() {
+	union() {
+		translate([0, 0, 0]) { 
+			hollow_hex(outer_radius = 120 / 2, wall_thickness = 3, height = 159.5);
+			difference() {
+				translate([0, 0, 5]) {
+					hollow_hex(outer_radius = 120 / 2, wall_thickness = 19.2, height = 5);
+				}
+				translate([0, 0, 5]) {	
+					helper_diff_cube();
+				}
+				bearing_riser_screw_holes_DIFF();
 			}
-			translate([0, 0, 0]) {
-				//color("red")
-					cube([90, 100, 6], center = true);
+			difference() {
+				translate([0, 0, 0]) {
+					hollow_hex(outer_radius = 120 / 2, wall_thickness = 120 / 2, height = 5);
+				}
+				translate([0, 0, -0.001]) {
+					scale(1.001) bearing_riser_lower();
+				}
 			}
-		}	
+		}
 	}
 }
 
@@ -80,7 +97,7 @@ module base_and_riser() {
 }
 
 module motor_and_box() {
-	translate([60.96, 0, 134.5 + 5]) {
+	translate([60.96, 0, (134.5 - 134.5) + 5]) {
 		rotate([0, 0, 90]) {
 			import("../stl/neo_geared_80_1.stl");
 		}
@@ -89,7 +106,10 @@ module motor_and_box() {
 
 module base() {
 	difference() {
-		base_and_riser();
+		union() {
+			base_and_riser();
+			neo_box_raw();
+		}
 		*motor_and_box();
 		translate([60.96, 0,5 + (0.002)]) {
 			rotate([0, 0, 90]) {
@@ -101,15 +121,15 @@ module base() {
 
 base();
 
-
-// this gotta go
-translate([100, 100, 0]) {
-	*neo_mockup_diff();
-	
-hollow_hex(outer_radius=(120 - 5) / 2, wall_thickness = 50, height=10);
+translate([60.96, 0,5 + (0.002)]) {
+	rotate([0, 0, 90]) {
+		*neo_mockup_diff();
+	}
 }
 
+motor_and_box();
+
 // this too
-translate([0, 0, 0]) {
-	neo_box_raw();
+translate([0, 0, 5]) {
+	*neo_box_raw();
 }
