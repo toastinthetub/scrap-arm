@@ -110,7 +110,7 @@ module base() {
 			base_and_riser();
 			neo_box_raw();
 		}
-		*motor_and_box();
+		motor_and_box();
 		translate([60.96, 0,5 + (0.002)]) {
 			rotate([0, 0, 90]) {
 				*neo_mockup_diff();
@@ -127,7 +127,7 @@ translate([60.96, 0,5 + (0.002)]) {
 	}
 }
 
-motor_and_box();
+*motor_and_box();
 
 // this too
 translate([0, 0, 5]) {

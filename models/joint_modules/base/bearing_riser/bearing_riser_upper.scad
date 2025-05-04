@@ -10,6 +10,9 @@ module bearing_riser_upper() {
 		translate([0, 0, 5]) {
 			hollow_cylinder(outer_d = 70, inner_d = 40, h = 117.5);
 		}
+		translate([0, 0, 5]) {
+			//hollow_cylinder(outer_d = 70, inner_d = )
+		}
 	}
 }
 
