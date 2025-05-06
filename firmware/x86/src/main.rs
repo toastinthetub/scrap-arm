@@ -1,75 +1,97 @@
-// socketcan/examples/echo.rs
-//
-// This file is part of the Rust 'socketcan-rs' library.
-//
-// Licensed under the MIT license:
-//   <LICENSE or http://opensource.org/licenses/MIT>
-// This file may not be copied, modified, or distributed except according
-// to those terms.
-//
-// @author Natesh Narain <nnaraindev@gmail.com>
-// @date Jul 05 2022
-//
-//! Listen on a CAN interface and echo any CAN 2.0 data frames back to
-//! the bus.
-//!
-//! The frames are sent back on CAN ID +1.
-//!
-//! You can test send frames to the application like this:
-//!
-//!```text
-//! $ cansend can0 110#00112233
-//! $ cansend can0 110#0011223344556677
-//!```
-//!
+use socketcan::{CanFrame, CanId, CanSocket, EmbeddedFrame, ExtendedId, Socket};
+use std::sync::{Arc, Mutex};
+use std::thread;
+use std::time::Duration;
 
-use anyhow::Context;
-use embedded_can::{blocking::Can, Frame as EmbeddedFrame};
-use socketcan::{CanFrame, CanSocket, Frame, Socket};
-use std::{
-    env,
-    sync::atomic::{AtomicBool, Ordering},
-    time::Duration,
-};
+// Base extended ID for SparkMax “Speed Set” (device ID = 0)
+const SPEED_SET_BASE: u32 = 0x2050480;
 
-fn frame_to_string<F: Frame>(frame: &F) -> String {
-    let id = frame.raw_id();
-
-    let data_string = frame
-        .data()
-        .iter()
-        .fold(String::new(), |a, b| format!("{} {:02X}", a, b));
-
-    format!("{:08X}  [{}] {}", id, frame.dlc(), data_string)
+/// Represents a SparkMax on the CAN bus with simple set/get API.
+pub struct SparkMax {
+    tx: CanSocket,
+    velocity: Arc<Mutex<f32>>,
 }
 
-// --------------------------------------------------------------------------
+impl SparkMax {
+    /// Create a new SparkMax interface on `interface` (e.g. "can0"), with given `device_id`.
+    pub fn new(interface: &str, device_id: u8) -> std::io::Result<Self> {
+        // Open CAN socket for send and receive
+        let tx = CanSocket::open(interface)?;
+        let mut rx = CanSocket::open(interface)?;
+        let velocity = Arc::new(Mutex::new(0.0_f32));
+        let velocity_thread = Arc::clone(&velocity);
 
-fn main() -> anyhow::Result<()> {
-    let iface = env::args().nth(1).unwrap_or_else(|| "vcan0".into());
+        // Compute the full CAN IDs including device ID
+        let status1_base: u32 = 0x2051840; // base for Periodic Status 1
+        let status1_id =
+            CanId::Extended(ExtendedId::new(status1_base | (device_id as u32)).unwrap());
 
-    let mut sock = CanSocket::open(&iface)
-        .with_context(|| format!("Failed to open socket on interface {}", iface))?;
-
-    static QUIT: AtomicBool = AtomicBool::new(false);
-
-    ctrlc::set_handler(|| {
-        QUIT.store(true, Ordering::Relaxed);
-    })
-    .expect("Failed to set ^C handler");
-
-    while !QUIT.load(Ordering::Relaxed) {
-        if let Ok(frame) = sock.read_frame_timeout(Duration::from_millis(100)) {
-            println!("{}", frame_to_string(&frame));
-
-            let new_id = frame.can_id() + 0x01;
-
-            if let Some(echo_frame) = CanFrame::new(new_id, frame.data()) {
-                sock.transmit(&echo_frame)
-                    .expect("Failed to echo received frame");
+        // Spawn a thread to read CAN frames and update velocity
+        thread::spawn(move || {
+            loop {
+                match rx.read_frame() {
+                    Ok(frame) => {
+                        // If the frame matches the SparkMax's status-1 ID, parse velocity
+                        if frame.id() == status1_id.into() {
+                            let data = frame.data();
+                            if data.len() >= 4 {
+                                // Bytes 0-3: motor velocity (float, RPM, little-endian):contentReference[oaicite:3]{index=3}
+                                let vel = f32::from_le_bytes([data[0], data[1], data[2], data[3]]);
+                                *velocity_thread.lock().unwrap() = vel;
+                            }
+                        }
+                        println!("but we did read...")
+                    }
+                    Err(e) => {
+                        eprintln!("CAN read error: {}", e);
+                        break;
+                    }
+                }
             }
-        }
+        });
+
+        Ok(SparkMax { tx, velocity })
     }
+
+    /// send closed-loop speed command in rpm to the motor.
+    pub fn set_speed(&self, speed_rpm: f32, device_id: u8) -> std::io::Result<()> {
+        // make the payload 32-bit float (little-endian) then zeros
+        let mut data = [0u8; 8];
+        data[0..4].copy_from_slice(&speed_rpm.to_le_bytes());
+
+        // make extended CAN ID with device ID
+        let can_id_val = SPEED_SET_BASE | (device_id as u32);
+        let id = CanId::Extended(ExtendedId::new(can_id_val).unwrap());
+
+        // create and send CAN data frame (8 bytes)
+        let frame = CanFrame::new(id, &data).unwrap();
+        self.tx.write_frame(&frame)?;
+        Ok(())
+    }
+
+    /// the latest velocity (RPM) from periodic status frames.
+    pub fn get_velocity(&self) -> f32 {
+        *self.velocity.lock().unwrap()
+    }
+}
+
+fn main() -> std::io::Result<()> {
+    let interface = "can0"; // e.g. use a CANable on can0
+    let device_id = 1u8; // SparkMax CAN ID
+
+    // Initialize SparkMax interface
+    let spark = SparkMax::new(interface, device_id)?;
+
+    // Example: set speed to 1500 RPM
+    spark.set_speed(1500.0, device_id)?;
+    println!("Sent speed command: 1500 RPM");
+
+    // Wait a moment to receive status frames
+    thread::sleep(Duration::from_millis(100));
+
+    // Read and print velocity from SparkMax (RPM)
+    let vel = spark.get_velocity();
+    println!("Current velocity (RPM): {:.2}", vel);
 
     Ok(())
 }
