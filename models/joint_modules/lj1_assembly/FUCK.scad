@@ -14,9 +14,11 @@ module bearing_diff() {
 
 // M3 screw bolt circle 32mm diameter
 module neo_550_bolt_circle() {
-	bolt_circle(num_bolts = 6, circle_radius = 32 / 2, hole_diameter = 3, hole_height = 10);
+	bolt_circle(num_bolts = 6, circle_radius = 32 / 2, hole_diameter = 3.2, hole_height = 10);
 	translate([0, 0, 10 / 2])
 		cylinder(h = 10, r = (24 / 2) + 0.3, center = true);
+	translate([0, 0, 0]) 
+		bolt_circle(num_bolts = 6, circle_radius = 32 / 2, hole_diameter = 5.3, hole_height = 0.5);
 }
 
 module small_neo_pocket() {
@@ -27,7 +29,7 @@ module small_neo_pocket() {
 
 module hex_half_hole(h) {
 	translate([0, 0, h]);
-	cylinder(h = h, r = 12.7 / 2,$fn = 6, center = true);
+	cylinder(h = h, r = 12.7 / sqrt(3),$fn = 6, center = true);
 }
 
 module hex_end() {
@@ -66,7 +68,7 @@ module neo_plate() {
 		union() {
 			plate_hex_ends();
 		}
-		translate([((192 / 2) - (51 / 2)) - 32 / 2, 0, -0.1]) {
+		translate([((192 / 2) - (51 / 2)) - 40 / 2, 0, -0.1]) {
 			neo_550_bolt_circle();
 			translate([0, 0, 7.9]) small_neo_pocket();
 		}
