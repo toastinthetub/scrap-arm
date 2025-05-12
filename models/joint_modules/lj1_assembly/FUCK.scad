@@ -68,17 +68,31 @@ module neo_plate() {
 		union() {
 			plate_hex_ends();
 		}
-		translate([((192 / 2) - (51 / 2)) - 40 / 2, 0, -0.1]) {
+		translate([31, 0, -0.1]) {
 			neo_550_bolt_circle();
 			translate([0, 0, 7.9]) small_neo_pocket();
 		}
 	}
 }
 
-neo_plate();
+*neo_plate();
 
-*difference() {
-	neo_plate();
-	translate([0, 0, 5])
-	cube([245, 52, 8], center = true);
+module small_sparkmax_pocket() {
+	translate([0, 0, 0 ]) {
+		cube([34.5, 69.074, 24.950]);
+	}
 }
+
+module bearing_plate() {
+	difference() {
+		union() {
+			plate_hex_ends();
+		}
+		translate([31, 0, 0]) {
+			bearing_diff();
+		}
+	}
+}
+
+rotate([0, 0, 0])
+bearing_plate();
