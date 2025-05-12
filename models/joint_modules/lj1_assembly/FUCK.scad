@@ -75,11 +75,11 @@ module neo_plate() {
 	}
 }
 
-*neo_plate();
+//////////////////////////////////////////
 
 module small_sparkmax_pocket() {
-	translate([0, 0, 0 ]) {
-		cube([34.5, 69.074, 24.950]);
+	translate([0, 0, 24.950 / 2]) {
+		cube([34.5, 69.074, 24.950], center = true);
 	}
 }
 
@@ -94,5 +94,11 @@ module bearing_plate() {
 	}
 }
 
-rotate([0, 0, 0])
-bearing_plate();
+*rotate([0, 0, 0])
+	bearing_plate();
+
+difference() {
+	neo_plate();
+	rotate([0, 0, 90]) translate([0, 69.074 / 2, 7.9 - 1])
+	small_sparkmax_pocket();
+}

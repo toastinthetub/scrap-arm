@@ -1,5 +1,5 @@
 include <pulley-generator.scad>;
-include <gearhub_pulley_old.scad>;
+//include <gearhub_pulley_old.scad>;
 include <samSCAD/samstdlib.scad>;
 
 module sprocket_raw() {
@@ -17,7 +17,7 @@ module sprocket_raw() {
 module sprocket_big_bolt_holes() {
 	translate([0, 0, -0.1]) {
 		bolt_circle(num_bolts = 4, 
-			circle_radius = (78 / 2) - (9 / 4), 
+			circle_radius = 72 / 2, 
 			hole_diameter = 9, 
 			hole_height = 25
 		);
@@ -27,22 +27,22 @@ module sprocket_big_bolt_holes() {
 // LITTLE HOLES
 module sprocket_little_bolt_holes() {
 	translate([0, 0, -2]) {
-		rotate([0, 0, 45]) {
+		rotate([0, 0, 0]) {
 			bolt_square(num_x = 2,
 				num_y = 2,
-				spacing_x = 25 - (6 / 2), 
-				spacing_y = 78 - (6 / 2), 
+				spacing_x = 40, 
+				spacing_y = 70, 
 				hole_diameter = 6, 
 				hole_height = 25
 			);
 		}
 	}
-	*translate([0, 0, -2]) {
-		rotate([0, 0, 90]) {
+	translate([0, 0, -2]) {
+		rotate([0, 0, 45]) {
 			bolt_square(num_x = 2, 
 				num_y = 2, 
-				spacing_x = 45 - (6 / 2), 
-				spacing_y = 78 - (6 / 2), 
+				spacing_x = 20, 
+				spacing_y = 78, 
 				hole_diameter = 6, 
 				hole_height = 25
 			);
@@ -52,14 +52,14 @@ module sprocket_little_bolt_holes() {
 
 module sprocket() {
 	difference() {
-		// DEBUG
+		/* DEBUG
 		translate([0, 0, 13 / 2]) {
 			$fn = 8;
 			cylinder(h = 1, r = 102.27 / 2, center = true);
-		}
+		} */
 		
 		
-		*sprocket_raw();
+		sprocket_raw();
 		cylinder(h = 40, r = 48.2 / 2, center = true);
 		
 		// diff with the screw holes
@@ -101,6 +101,7 @@ module both_test() {
 }
 
 both_test();
+
 
 *hollow_cylinder(outer_d = 50, inner_d = 48, h = 10);
 
