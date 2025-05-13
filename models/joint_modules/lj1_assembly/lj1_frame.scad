@@ -94,7 +94,7 @@ module bearing_plate() {
 	}
 }
 
-*rotate([0, 0, 0])
+rotate([0, 180, 0]) translate([0, 65, -8])
 	bearing_plate();
 
 difference() {
@@ -102,3 +102,11 @@ difference() {
 	rotate([0, 0, 90]) translate([0, 69.074 / 2, 7.9 - 1])
 	small_sparkmax_pocket();
 }
+
+translate([0, 115, 50 / 2]) {
+	scale(0.98) hex_half_hole(h = 50);
+} 
+
+translate([20, 115, 50 / 2]) {
+	scale(0.98) hex_half_hole(h = 50);
+} 
