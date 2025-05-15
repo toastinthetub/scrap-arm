@@ -39,6 +39,12 @@ module hex_end() {
 	}
 }
 
+module brick_raw() {
+	translate([0, 0, 8 / 2]) {
+		cube([192, 51, 8], center = true);
+	}
+}
+
 module plate_raw() {
 	translate([0, 0, 8 / 2]) {
 		cube([192, 51, 8], center = true);
@@ -75,38 +81,57 @@ module neo_plate() {
 	}
 }
 
-//////////////////////////////////////////
+// wall thickness = 8mm
+// throw a 550 in there with 3mm clearance on the inside to fit
+// which means IW of this link is 38 - 6 = 32, with a diff in it
 
-module small_sparkmax_pocket() {
-	translate([0, 0, 24.950 / 2]) {
-		cube([34.5, 69.074, 24.950], center = true);
+module neo_lj2_diff() {
+	translate([0, 0, 0]) rotate([0, 0, 0]) {
+		cylinder(h = h, r = 38 / sqrt(3),$fn = 6, center = true);
 	}
 }
 
-module bearing_plate() {
+// circle 36.8 + cable part 7.34mm
+module neo_lj2_housing() {
+	hollow_cylinder(outer_d = 37.9, inner_d = 36.9);
+}
+
+module lj2_frame_bottom() {
+	// bottom
 	difference() {
 		union() {
+			translate([0, 0, 0]) {
+				rotate([0, 0, 0]) {
+					brick_raw();
+				}
+			}
+		}
+
+		// bool
+		
+		
+	}
+}
+
+module lj2_frame_outside() {
+	translate([0, 16 + (32 / 2), 51 / 2]) {
+		rotate([90, 0, 0]) {
 			plate_hex_ends();
 		}
-		translate([31, 0, 0]) {
-			bearing_diff();
+	}
+	translate([0, - 8 - (32 / 2), 51 / 2]) {
+		rotate([90, 0, 0]) {
+			plate_hex_ends();
 		}
 	}
 }
 
-rotate([0, 180, 0]) translate([0, 65, -8])
-	bearing_plate();
-
-difference() {
-	neo_plate();
-	rotate([0, 0, 90]) translate([0, 69.074 / 2, 7.9 - 1])
-	small_sparkmax_pocket();
+module lj2() {
+	lj2_frame_outside();
+	lj2_frame_bottom();
+	translate([50, 0, 0]) {
+		neo_lj2_housing();
+	}
 }
 
-translate([0, 115, 50 / 2]) {
-	scale(0.98) hex_half_hole(h = 50);
-} 
-
-translate([20, 115, 50 / 2]) {
-	scale(0.98) hex_half_hole(h = 50);
-} 
+lj2();
