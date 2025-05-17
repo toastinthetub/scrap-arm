@@ -17,10 +17,10 @@ module bearing_diff() {
 // M3 screw bolt circle 32mm diameter
 module neo_550_bolt_circle() {
 	// big holes
-	translate([0, 0, 0.5]) {
+	translate([0, 0, 0]) {
 		bolt_circle(num_bolts = 6, circle_radius = 32 / 2, hole_diameter = 3.25, hole_height = 20);
 	}
-	translate([0, 0, 10 / 2]) {
+	translate([0, 0, 20 / 2]) {
 		cylinder(h = 20, r = (24 / 2) + 0.3, center = true);
 	}
 	// little holes
@@ -29,11 +29,6 @@ module neo_550_bolt_circle() {
 	}
 }
 
-
-// HERHEHREHREHRHEREHREHREHREHRHERHERHEHR
-translate([0, 50, 0]) {
-	neo_550_bolt_circle();
-}
 
 module hex_half_hole(h) {
 	translate([0, 0, h]);
@@ -55,8 +50,8 @@ module plate_raw() {
 		translate([192 / 2, 0, 0]) {
 			hex_end();
 		}
-		translate([-(192 / 2), 0, 0]) {
-			hex_end();
+		translate([-(192 / 2), 0, -0.1]) {
+			scale(1.01)hex_end();
 		}
 	}
 	translate([192 / 2, 0, 0]) {
@@ -171,10 +166,6 @@ module neo_plate_box_extrude() {
 				ramp(width=3, height=8, depth=45);		
 			}
 
-			translate([-14.2, 0, 16]) {
-				neo_550_bolt_circle();
-			}
-
 			// front ramp
 			translate([0, 0, 8]) {
 				neo_plate_front_ramp();
@@ -192,10 +183,13 @@ module neo_plate_box_extrude() {
 		// NEXT THING
 
 		union() {
-			translate([-14.2, 0, 16 - (5.529)]) rotate([0, 0, 0])
-			neo_plate_box_diff_inner();
-		}
-		
+			translate([-14.2, 0, 16 - (5.529)]) rotate([0, 0, 0]) {
+				neo_plate_box_diff_inner();
+			}
+			translate([-14.2, 0, (16 - 5.53) - 0.45]) {
+				cylinder(h = 1, r = 19, center = true);
+			}
+		}			
 	}
 }
 
@@ -242,7 +236,7 @@ module hex_diffs() {
 	}
 }
 
-module neo_side() {
+module neo_side_THISISNOWAHELPER() {
 	difference() {
 		// MODEL TO SUBTRACT FROM
 		union() {
@@ -251,6 +245,25 @@ module neo_side() {
 		// SUBTRACTION
 		union() {
 			hex_diffs();
+			translate([-14.2, 0, -0.1]) {
+				neo_550_bolt_circle();
+			}
+		}
+	}
+}
+
+module neo_side() {
+	union() {
+		difference() {
+			union() {
+				neo_side_THISISNOWAHELPER();
+				translate([(-191 / 2) - 0.3, 0, 8]) {
+					scale(1.01)hex_end();
+				}
+			}
+			union() {
+				// tkjsntkj4
+			}
 		}
 	}
 }
