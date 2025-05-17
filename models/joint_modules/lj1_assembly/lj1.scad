@@ -17,15 +17,17 @@ module bearing_diff() {
 // M3 screw bolt circle 32mm diameter
 module neo_550_bolt_circle() {
 	// big holes
-	translate([0, 0, 0]) {
-		bolt_circle(num_bolts = 6, circle_radius = 32 / 2, hole_diameter = 3.25, hole_height = 20);
-	}
-	translate([0, 0, 20 / 2]) {
-		cylinder(h = 20, r = (24 / 2) + 0.3, center = true);
-	}
-	// little holes
-	translate([0, 0, (0.5) / 2]) {
-		bolt_circle(num_bolts = 6, circle_radius = 32 / 2, hole_diameter = 5.3, hole_height = 0.5);
+	translate([0, 0, 0]) union() {
+		translate([0, 0, 0]) {
+			bolt_circle(num_bolts = 6, circle_radius = 32 / 2, hole_diameter = 3.32, hole_height = 20);
+		}
+		translate([0, 0, 20 / 2]) {
+			cylinder(h = 20, r = (24 / 2) + 0.3, center = true);
+		}
+		// little holes
+		translate([0, 0, 0]) {
+			bolt_circle(num_bolts = 6, circle_radius = 32 / 2, hole_diameter = 6, hole_height = 1.5);
+		}
 	}
 }
 
@@ -50,8 +52,8 @@ module plate_raw() {
 		translate([192 / 2, 0, 0]) {
 			hex_end();
 		}
-		translate([-(192 / 2), 0, -0.1]) {
-			scale(1.01)hex_end();
+		translate([-(191 / 2), 0, -0.1]) {
+			*scale(1.01)hex_end();
 		}
 	}
 	translate([192 / 2, 0, 0]) {
@@ -66,7 +68,7 @@ module plate_hex_ends() {
 	difference() {
 		plate_raw();
 		translate([-(192 / 2), 0, 0]) {
-			hex_half_hole(h = 16.1);
+			*hex_half_hole(h = 16.1);
 		}
 		translate([(192 / 2), 0, 7.9]) rotate([180, 0, 0]) {
 			bearing_diff();
@@ -75,8 +77,8 @@ module plate_hex_ends() {
 }
 
 module small_neo_pocket() {
-	translate([0, 0, 0.5 / 2]) {
-		cylinder(h = 0.5, r = 38 / 2, $fn = 6, center = true);
+	translate([0, 0, 1 / 2]) {
+		cylinder(h = 1.0, r = 38 / 2, $fn = 6, center = true);
 	}
 }
 
@@ -186,8 +188,8 @@ module neo_plate_box_extrude() {
 			translate([-14.2, 0, 16 - (5.529)]) rotate([0, 0, 0]) {
 				neo_plate_box_diff_inner();
 			}
-			translate([-14.2, 0, (16 - 5.53) - 0.45]) {
-				cylinder(h = 1, r = 19, center = true);
+			translate([-14.2, 0, ((16 - 5.53) - 2/2) + 0.01]) {
+				cylinder(h = 2, r = 19, center = true);
 			}
 		}			
 	}
@@ -209,7 +211,6 @@ module neo_rawish_helper() {
 module neo_side_rawish() {
 	translate([0, 0, 8]) rotate([180, 0, 0]) plate_hex_ends();
 	translate([0, 0, 0]) rotate([0, 0, 0]) neo_plate_box_extrude();
-	*translate([0, 0, 8]) rotate([0, 0, 0]) plate_hex_ends();	
 }
 
 module neo_side_helper() {
@@ -252,7 +253,48 @@ module neo_side_THISISNOWAHELPER() {
 	}
 }
 
-module neo_side() {
+module sparkmax_pocket() {
+	union() {
+		difference() {
+			union() {
+				translate([0, 0, 10/2]) rotate([0, 0, 0]) {
+						cube([69.5, 34.8, 10], center = true);
+				}
+			}
+			union() {
+				
+			}
+		}
+	}
+}
+
+module tensioner_end_diff() {
+	union() {
+		translate([0, 0, 18/2]) rotate([0, 0, 0]) {
+			cube([51/2, 1, 18], center = true);
+		}
+		translate([0, 0, (16/2)]) rotate([90, 0, 0]) {
+			cylinder(h = 70, r=4.5/2, center = true);
+			translate([0, 0, -(50/2) -12.75]) {
+				cylinder(h = 50, r=6/2, center = true);
+			}
+			translate([0, 0, (50/2) + 12.75]) {
+				cylinder(h = 50, r=6/2, center = true);
+			}
+		}
+		translate([0, 0, 0]) rotate([0, 0, 0]) {
+			// cube([0, 0, 0], center = true);
+		}
+	}
+}
+
+module routing_holes() {
+	translate([0, 0, 100/2]) rotate([0, 0, 0]) { cube([8, 15, 100], center = true); }
+	translate([0, (15/4) + 1, 100/2]) rotate([0, 0, 0]) { cylinder(h = 100, r=5, center = true); }
+	translate([0, (-15/4) - 1, 100/2]) rotate([0, 0, 0]) { cylinder(h = 100, r=5, center = true); }
+}
+
+module yet_another_lazy_helper_function() {
 	union() {
 		difference() {
 			union() {
@@ -262,7 +304,30 @@ module neo_side() {
 				}
 			}
 			union() {
-				// tkjsntkj4
+				translate([-(191/2), 0, 8]) hex_half_hole(h = 25);
+				translate([-(191/2) - 51/4, 0, -0.02]) tensioner_end_diff();
+				*translate([-48 - (14.2/2), 0, 8]) rotate([0, 0, 90]) %sparkmax_pocket();
+			}
+		}
+	}
+
+}
+
+module neo_side() {
+	union() {
+		difference() {
+			union() {
+				yet_another_lazy_helper_function();
+			}
+			translate([0, 0, -50/2]) rotate([0, 55, 0]) {
+				routing_holes();
+			}
+			translate([0, 0, -25/2]) rotate([0, 55, 0]) {
+				scale(0.5) routing_holes();
+			}
+			scale(0.7) translate([-90, 0, -15]) rotate([0, 30, 0]) {
+				translate([0, 5, 0]) routing_holes();
+				translate([0, -5, 0]) routing_holes();
 			}
 		}
 	}
