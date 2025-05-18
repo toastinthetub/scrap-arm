@@ -276,21 +276,21 @@ module sparkmax_pocket() {
 }
 
 module tensioner_end_diff() {
-	union() {
+	translate([0, 0, 0])union() {
 		translate([0, 0, 18/2]) rotate([0, 0, 0]) {
 			cube([51/2, 1, 18], center = true);
 		}
 		translate([0, 0, (16/2)]) rotate([90, 0, 0]) {
-			cylinder(h = 70, r=4.5/2, center = true);
-			translate([0, 0, -(50/2) -12.75]) {
+			cylinder(h = 70, r=3.4/2, center = true);
+			translate([0, 0, -(50/2) -10.75]) {
 				cylinder(h = 50, r=6/2, center = true);
 			}
-			translate([0, 0, (50/2) + 12.75]) {
+			translate([0, 0, (50/2) + 10.75]) {
 				cylinder(h = 50, r=6/2, center = true);
 			}
 		}
-		translate([0, 0, 0]) rotate([0, 0, 0]) {
-			// cube([0, 0, 0], center = true);
+		translate([0, -7.99, (16/2)]) rotate([90, 0, 0]) {
+			m3_nut_trap(w = 4.3, h = 2.8);
 		}
 	}
 }
@@ -340,9 +340,13 @@ module neo_side() {
 			translate([(192/2) - 60, 0, -25/2]) rotate([0, -35, 0]) {
 				scale(0.5) routing_holes();
 			}
-			scale(0.7) translate([-90, 0, -15]) rotate([0, 30, 0]) {
+			scale(1) translate([-70, 0, -15]) rotate([0, 30, 0]) {
 				translate([0, 5, 0]) routing_holes();
 				translate([0, -5, 0]) routing_holes();
+			}
+			scale(0.7) translate([-100, 0, -15]) rotate([0, 30, 0]) {
+				translate([0, 0, 0]) routing_holes();
+				translate([0, 0, 0]) routing_holes();
 			}
 			translate([191/2, 0, 7.9999]) {
 				three_hex_ends();
@@ -395,7 +399,7 @@ module assembly() {
 	}
 }
 
-assembly();
+*assembly();
 *debug();
 
-*double_debug();
+double_debug();
