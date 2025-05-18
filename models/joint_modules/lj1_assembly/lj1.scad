@@ -47,30 +47,30 @@ module hex_end() {
 module plate_raw() {
 	difference() {
 		translate([0, 0, 8 / 2]) {
-			cube([192, 51, 8], center = true);
+			cube([191, 51, 8], center = true);
 		}
-		translate([192 / 2, 0, 0]) {
+		translate([191 / 2, 0, 0]) { // breaks if its 191. which should be correct. fuck.
 			hex_end();
 		}
 		translate([-(191 / 2), 0, -0.1]) {
-			*scale(1.01)hex_end();
+			*scale(1)hex_end();
 		}
 	}
-	translate([192 / 2, 0, 0]) {
+	translate([191 / 2, 0, 0]) {
 		hex_end();
 	}
-	translate([-(192 / 2), 0, 0]) {
-		hex_end();
+	translate([-(191 / 2), 0, 0]) {
+		scale(1)hex_end();
 	}
 }
 
 module plate_hex_ends() {
 	difference() {
 		plate_raw();
-		translate([-(192 / 2), 0, 0]) {
+		translate([-(191 / 2), 0, 0]) {
 			*hex_half_hole(h = 16.1);
 		}
-		translate([(192 / 2), 0, 7.9]) rotate([180, 0, 0]) {
+		translate([(191 / 2), 0, 7.9]) rotate([180, 0, 0]) {
 			bearing_diff();
 		}
 	}
@@ -86,7 +86,7 @@ module small_neo_pocket() {
 // END STUPID LIB STUFF ======================================================
 
 module sides_lol() {
-	translate([(191 / 2),  -((51 / 2) - 6 / 2), 0]) rotate([270, 180, 90]) {
+	translate([(191 / 2),  -((51 / 2) - (6 / 2)), 0]) rotate([270, 180, 90]) {
 		ramp(width=3, height=8, depth=191);		
 	}
 	translate([-(191 / 2),  ((51 / 2) - 6 / 2), 0]) rotate([270, 180, 270]) {
@@ -124,7 +124,7 @@ module neo_plate_front_ramp() {
 		difference() {
 				union() {
 				translate([-14.2 + (45 / 2), (51 / 2) - 5 + 2, 0]) rotate([90, 0, 0]) {
-					ramp(width=((191/2) - (-14.2 + (45 / 2))), height=8, depth=45);		
+					ramp(width=((191/2) - (-14.2 + (45 / 2))) + 2, height=8, depth=45);		
 				}
 			}
 		}
@@ -133,14 +133,13 @@ module neo_plate_front_ramp() {
 
 module inverse_neo_front_ramp_diff() {
 	union() {
-		translate([(191 / 2) - (87.2 / 2), -0.5, 0]) { 
+		translate([(191 / 2) - (87.2 / 2), 0, 0]) { 
 			difference() {
 				translate([0, 0, 8 / 2]) {
-					cube([89.2/*((191/2) - (-14.2 + (51/ 2))) + 0*/, 51, 8], center = true);
+					cube([(191/2) - 8.3/*89.2/*((191/2) - (-14.2 + (51/ 2))) + 0*/, 53, 8], center = true);
 				}
-				translate([(-87.2 / 2) - 1, ((51 / 2) + 0.5), 0]) rotate([90, 0, 0]) {
-					ramp(width=((191/2) - (-14.2 + (45 / 2))) + 2, height=8, depth=51);		
-					
+				translate([(-87.2 / 2), ((51 / 2)), 0]) rotate([90, 0, 0]) {
+					ramp(width=((191/2) - (-14.2 + (45 / 2))) + 2, height=8, depth=51);			
 				}
 			}
 		}
@@ -168,11 +167,13 @@ module neo_plate_box_extrude() {
 				ramp(width=3, height=8, depth=45);		
 			}
 
+			// HERE 2
+
 			// front ramp
 			translate([0, 0, 8]) {
 				neo_plate_front_ramp();
 				difference() {
-					sides_lol();
+					rotate([0, 0, 0]) translate([0, 0, 0]) sides_lol();
 					translate([0, 0, 0])
 					inverse_neo_front_ramp_diff();
 				}
@@ -208,6 +209,7 @@ module neo_rawish_helper() {
 	}
 } */
 
+// FUCKING HERE
 module neo_side_rawish() {
 	translate([0, 0, 8]) rotate([180, 0, 0]) plate_hex_ends();
 	translate([0, 0, 0]) rotate([0, 0, 0]) neo_plate_box_extrude();
@@ -223,13 +225,15 @@ module neo_side_helper() {
 	}
 }
 
+// HERE!
+
 module hex_diffs() {
 	union() {
 		translate([191 / 2, 0, 8.01]) {
 			three_hex_ends();
 		}
-		translate([-191 / 2, 0, 8]) {
-			three_hex_ends();
+		translate([(-191 / 2), 0, 8]) {
+			three_hex_ends();	
 		}
 		translate([(-191 / 2) - (51 / 2), 0, (8+ 8/2) - 0.01]) {
 			cube([51, 51, 8], center = true);
@@ -299,8 +303,8 @@ module yet_another_lazy_helper_function() {
 		difference() {
 			union() {
 				neo_side_THISISNOWAHELPER();
-				translate([(-191 / 2) - 0.3, 0, 8]) {
-					scale(1.01)hex_end();
+				translate([(-191 / 2), 0, 8]) {
+					scale(1)hex_end();
 				}
 			}
 			union() {
