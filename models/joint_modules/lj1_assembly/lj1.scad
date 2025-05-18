@@ -6,11 +6,13 @@ $fn = 100;
 
 // 608zz flanged bearing
 module bearing_diff() {
-	translate([0, 0, 7.9 / 2]) {
-		cylinder(h = 9/*7.91*/, r = 28.575 / 2, center = true);
-	}
-	translate([0, 0, 1.1 / 2]) {
-		cylinder(h = 1.11, r = 31.1 / 2, center = true);
+	translate([0, 0, (1.11) - 0.01])union() {
+		translate([0, 0, 7.9 / 2]) {
+			cylinder(h = 9/*7.91*/, r = 28.575 / 2, center = true);
+		}
+		translate([0, 0, -(1.11/2)]) {
+			cylinder(h = 1.11, r = 31.1 / 2, center = true);
+		}
 	}
 }
 
@@ -40,7 +42,7 @@ module hex_half_hole(h) {
 module hex_end() {
 	translate([0, 0, 8 / 2]) {
 		rotate([0, 0, 90])
-		cylinder(h = 8.03, r = 51 / 2, $fn = 6, center = true);
+		cylinder(h = 8, r = 51 / 2, $fn = 6, center = true);
 	}
 }
 
@@ -70,7 +72,7 @@ module plate_hex_ends() {
 		translate([-(191 / 2), 0, 0]) {
 			*hex_half_hole(h = 16.1);
 		}
-		translate([(191 / 2), 0, 7.9]) rotate([180, 0, 0]) {
+		translate([(191 / 2), 0, 8]) rotate([180, 0, 0]) {
 			bearing_diff();
 		}
 	}
@@ -127,6 +129,12 @@ module neo_plate_front_ramp() {
 					ramp(width=((191/2) - (-14.2 + (45 / 2))) + 2, height=8, depth=45);		
 				}
 			}
+			translate([(191/2), 0, 8 / 2]) {
+				cylinder(h = 9/*7.91*/, r = 28.575 / 2, center = true);
+			}
+			translate([191/2, 0, -3]) {
+				three_hex_ends();
+			}
 		}
 	}
 }
@@ -166,8 +174,6 @@ module neo_plate_box_extrude() {
 			translate([-14.2 - (45 / 2), (51 / 2) - (6 / 2) , 8]) rotate([270, 180, 270]) {
 				ramp(width=3, height=8, depth=45);		
 			}
-
-			// HERE 2
 
 			// front ramp
 			translate([0, 0, 8]) {
@@ -209,7 +215,6 @@ module neo_rawish_helper() {
 	}
 } */
 
-// FUCKING HERE
 module neo_side_rawish() {
 	translate([0, 0, 8]) rotate([180, 0, 0]) plate_hex_ends();
 	translate([0, 0, 0]) rotate([0, 0, 0]) neo_plate_box_extrude();
@@ -224,8 +229,6 @@ module neo_side_helper() {
 			neo_side_rawish();
 	}
 }
-
-// HERE!
 
 module hex_diffs() {
 	union() {
@@ -303,7 +306,7 @@ module yet_another_lazy_helper_function() {
 		difference() {
 			union() {
 				neo_side_THISISNOWAHELPER();
-				translate([(-191 / 2), 0, 8]) {
+				translate([(-191 / 2), 0, 7.99]) {
 					scale(1)hex_end();
 				}
 			}
@@ -317,22 +320,34 @@ module yet_another_lazy_helper_function() {
 
 }
 
+module abacus() {
+	translate([191/2, 0, 8/2 + 8]) rotate([0, 0, 0]) {
+			cylinder(h = 8, r1 = 191/4 - 10, r2 = (191/4), $fn = 18, center = true);
+			bearing_diff();
+	}
+}
+
+
 module neo_side() {
 	union() {
 		difference() {
 			union() {
 				yet_another_lazy_helper_function();
 			}
-			translate([0, 0, -50/2]) rotate([0, 55, 0]) {
+			translate([(192/2) - 35, 0, -50/2]) rotate([0, -35, 0]) {
 				routing_holes();
 			}
-			translate([0, 0, -25/2]) rotate([0, 55, 0]) {
+			translate([(192/2) - 60, 0, -25/2]) rotate([0, -35, 0]) {
 				scale(0.5) routing_holes();
 			}
 			scale(0.7) translate([-90, 0, -15]) rotate([0, 30, 0]) {
 				translate([0, 5, 0]) routing_holes();
 				translate([0, -5, 0]) routing_holes();
 			}
+			translate([191/2, 0, 7.9999]) {
+				three_hex_ends();
+			}
+			abacus();
 		}
 	}
 }
@@ -349,7 +364,8 @@ module bearing_side() {
 			bearing_side_helper();
 		}
 		union() {
-			
+			translate([-(191/2), 0, 8]) hex_half_hole(h = 25);
+			translate([-(191/2) - 51/4, 0, -4]) tensioner_end_diff();
 		}
 	}
 }
@@ -374,12 +390,12 @@ module assembly() {
 	translate([0, -(16.75 / 2), 51 / 2]) rotate([90, 0, 0]) {
 		neo_side();
 	}
-	translate([0, (16.75 / 2), 51 / 2]) rotate([270, 0, 0]) {
+	translate([0, (16.75/2) + 8, 51 / 2]) rotate([90, 0, 0]) {
 		bearing_side();
 	}
 }
 
-*assembly();
+assembly();
 *debug();
 
-double_debug();
+*double_debug();
