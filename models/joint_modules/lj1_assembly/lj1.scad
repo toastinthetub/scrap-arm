@@ -33,7 +33,7 @@ module neo_550_bolt_circle() {
 	}
 }
 
-
+// 79
 module hex_half_hole(h) {
 	translate([0, 0, h]);
 	cylinder(h = h, r = 12.7 / sqrt(3),$fn = 6, center = true);
@@ -72,7 +72,7 @@ module plate_hex_ends() {
 		translate([-(191 / 2), 0, 0]) {
 			*hex_half_hole(h = 16.1);
 		}
-		translate([(191 / 2), 0, 8]) rotate([180, 0, 0]) {
+		translate([(191 / 2) /*fuckity*/ - (-14.2 + 79/2)/*unfuckity*/, 0, 8]) rotate([180, 0, 0]) {
 			bearing_diff();
 		}
 	}
@@ -322,7 +322,7 @@ module yet_another_lazy_helper_function() {
 
 module abacus() {
 	translate([191/2, 0, 8/2 + 8]) rotate([0, 0, 0]) {
-			cylinder(h = 8, r1 = 191/4 - 10, r2 = (191/4), $fn = 18, center = true);
+			cylinder(h = 8, r1 = (191/4) - 2, r2 = (191/4) + 10, $fn = 18, center = true);
 			bearing_diff();
 	}
 }
@@ -370,17 +370,51 @@ module bearing_side() {
 		union() {
 			translate([-(191/2), 0, 8]) hex_half_hole(h = 25);
 			translate([-(191/2) - 51/4, 0, -4]) tensioner_end_diff();
+			translate([-14.2, 0, 8]) rotate([180, 0, 0])bearing_diff();
 		}
 	}
 }
 
+module a_fucking_shitload_of_hex_shaft() {
+	translate([0, 80, 40.75/2]) {
+		hex_half_hole(h = 40.75);
+	}
+	translate([20, 80, 60.75/2]) {
+		hex_half_hole(h = 60.75);
+	}
+	translate([-20, 80, 50.75/2]) {
+		hex_half_hole(h = 50.75);
+	}
+	translate([40, 80, 60.75/2]) {
+		hex_half_hole(h = 60.75);
+	}
+	translate([-40, 80, 50.75/2]) {
+		hex_half_hole(h = 50.75);
+	}
+
+}
+
+module next_link_plate_placeholder() {
+	difference() {
+		union() {
+			hex_end();
+		}
+					hex_half_hole(h = 20);
+
+	}
+}
+
 module debug() {
-	translate([0, 50, 0]) rotate([0, 0, 0]) {
+	translate([0, (50/2) +4, 0]) rotate([0, 0, 0]) {
 		neo_side();
 	}
-	translate([0, -50, 0]) rotate([0, 0, 0]) {
+	translate([0, (-50/2) -4, 0]) rotate([0, 0, 0]) {
 		bearing_side();
 	}
+	translate([0, (-80) -4, 0]) rotate([0, 0, 0]) {
+		next_link_plate_placeholder();
+	}
+	scale(0.999)a_fucking_shitload_of_hex_shaft();
 }
 
 module double_debug() {
@@ -392,7 +426,10 @@ module double_debug() {
 // FULL ASSEMBLY
 module assembly() {
 	translate([0, -(16.75 / 2), 51 / 2]) rotate([90, 0, 0]) {
-		neo_side();
+		//neo_side();
+		difference() {
+			neo_side();
+		}
 	}
 	translate([0, (16.75/2) + 8, 51 / 2]) rotate([90, 0, 0]) {
 		bearing_side();
@@ -400,6 +437,6 @@ module assembly() {
 }
 
 *assembly();
-*debug();
+debug();
 
-double_debug();
+*double_debug();
