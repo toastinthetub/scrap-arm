@@ -1,5 +1,5 @@
 include <samSCAD/samstdlib.scad>
-include <lj1_old_lib.scad>
+include <lib/lj1_old_lib.scad>
 include <lib/hex-grid.scad>
 
 module grid_bottom() {
@@ -52,8 +52,8 @@ module bottom_lattice_structure() {
 module top_lattice_structure() {
 	difference() {
 		union() {
-			translate([-65/2, 0, 51 - (6/2)]) rotate([0, 0, 0]) {
-				create_grid(size=[191 - 65,46.75,6],SW=10,wall=4);
+			translate([-54/2, 0, 51 - (6/2)]) rotate([0, 0, 0]) {
+				create_grid(size=[191 - 100,46.75,6],SW=10,wall=4);
 			}
 		}
 		union() {
@@ -78,6 +78,7 @@ module final_everything() {
 		}
 		union() {
 			translate([-95.5 + 48, 8, -51/3]) yoke_obstruction_diff();
+			translate([35, 46.75-8-3, 51/2]) rotate([90, 0, 0]) sparkmax_pocket();
 		}
 	}
 }
