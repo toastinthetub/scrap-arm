@@ -23,7 +23,7 @@ module drive() {
 	}
 }
 
-drive();
+*drive();
 
 module sprocket_raw() {
 	pulley3DP(
@@ -47,5 +47,5 @@ module sprocket() {
 }
 
 translate([0, 50, 0]) {
-	sprocket();
+	*sprocket();
 }

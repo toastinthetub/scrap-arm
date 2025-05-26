@@ -18,8 +18,15 @@ module sprocket_big_bolt_holes() {
 	translate([0, 0, -0.1]) {
 		bolt_circle(num_bolts = 4, 
 			circle_radius = 72 / 2, 
-			hole_diameter = 9, 
+			hole_diameter = 10, 
 			hole_height = 25
+		);
+	}
+	translate([0, 0, 0]) {
+		bolt_circle(num_bolts = 4, 
+			circle_radius = 72 / 2, 
+			hole_diameter = 14.2, 
+			hole_height = 7.7
 		);
 	}
 }
@@ -43,7 +50,7 @@ module sprocket_little_bolt_holes() {
 				num_y = 2, 
 				spacing_x = 20, 
 				spacing_y = 78, 
-				hole_diameter = 6, 
+				hole_diameter = 6.2, 
 				hole_height = 25
 			);
 		}
@@ -65,7 +72,7 @@ module sprocket() {
 		// diff with the screw holes
 		union() {
 			rotate([0, 0, 0]) {
-				sprocket_little_bolt_holes();
+				*sprocket_little_bolt_holes();
 			}
 			rotate([0, 0, 0]) {
 				sprocket_big_bolt_holes();
