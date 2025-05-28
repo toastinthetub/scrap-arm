@@ -73,17 +73,36 @@ module yoke_obstruction_diff() {
 }
 
 module neo_side_diff_triangles() {
-	translate([0, 80, 0]) rotate([0, 0, 0]) {
-		translate([0, 0, 0]) {
-			cube([51, 51, 16], center = true);
+	difference() {
+		union() {
+			translate([-51/2, -51/2, -18/2]) rotate([0, 0, 0]) {
+				ramp(51, 51/2, 18);
+			}
+			translate([-51/2, 51/2, 18/2]) rotate([180, 0, 0]) {
+				ramp(51, 51/2, 18);
+			}
 		}
-		translate([0, 0, 0]) rotate([0, 0, 0]) {
-			ramp(10, 5, 5);
+		union() {
+			difference() {
+				translate([0, 0, 0]) rotate([0, 0, 0]) {
+					translate([0, 0, 0]) {
+						scale(0.99)cube([51, 51, 18], center = true);
+					}
+				}
+				union() {
+					translate([-51/2, -51/2, -18/2]) rotate([0, 0, 0]) {
+						ramp(51, 51/2, 18);
+					}
+					translate([-51/2, 51/2, 18/2]) rotate([180, 0, 0]) {
+						ramp(51, 51/2, 18);
+					}
+				}
+			}
 		}
 	}
 }
 
-neo_side_diff_triangles();
+translate([0, 80, 0]) rotate([0, 0, 90]) neo_side_diff_triangles();
 
 module final_everything() {
 	difference() {
