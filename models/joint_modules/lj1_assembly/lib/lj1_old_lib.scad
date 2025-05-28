@@ -333,6 +333,12 @@ module neo_side() {
 		difference() {
 			union() {
 				yet_another_lazy_helper_function();
+				translate([-191/2, 0, -(7.9999*6) + 0.6]) {
+					difference() {
+						three_hex_ends();
+						hex_half_hole(h = 125);
+					}
+				}
 			}
 			translate([(192/2) - 35, 0, -50/2]) rotate([0, -35, 0]) {
 				routing_holes();
@@ -350,8 +356,12 @@ module neo_side() {
 			}
 			translate([191/2, 0, 7.9999]) {
 				three_hex_ends();
+				
 			}
 			abacus();
+			translate([(-191/2) + 30, 55/2, (45/2) - (30/2)]) rotate([90, 0, 0]) {
+				*oval_cylinder(28, 30, 55); 
+			}
 		}
 	}
 }
@@ -370,7 +380,7 @@ module bearing_side() {
 		union() {
 			translate([-(191/2), 0, 8]) hex_half_hole(h = 25);
 			translate([-(191/2) - 51/4, 0, -4]) tensioner_end_diff();
-			translate([-14.2, 0, 8]) rotate([180, 0, 0])bearing_diff();
+			*translate([-14.2, 0, 8]) rotate([180, 0, 0])bearing_diff();
 		}
 	}
 }
