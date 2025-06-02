@@ -1,18 +1,8 @@
-mod sparkmax;
+mod canbus;
 
-use sparkmax::SparkMax;
-use std::thread::sleep;
-use std::time::Duration;
+use half;
+use socketcan;
 
-fn main() -> std::io::Result<()> {
-    let motor = SparkMax::new(3, "can0")?;
-
-    println!("set speed 2000.0");
-    motor.set_speed(2000.0)?;
-
-    loop {
-        let vel = motor.read_velocity()?;
-        println!("velocity: {:.2} RPM", vel);
-        sleep(Duration::from_millis(50));
-    }
+fn main() {
+    println!("not too much to see here");
 }

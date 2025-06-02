@@ -4,4 +4,5 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-socketcan = "3.5"
+socketcan = "3.5.0"
+half = "2.6.0"
