@@ -14,6 +14,19 @@ module bearing_diff() {
 	}
 }
 
+module hex_end(h) {
+	translate([0, 0, 0]) {
+		rotate([90, 90, 0])
+		cylinder(h = h, r = 51 / 2, $fn = 6, center = true);
+	}
+}
+
+module hex_of_radius_num(h, num) {
+	translate([0, 0, h]);
+	cylinder(h = h, r = num / sqrt(3),$fn = 6, center = true);
+}
+
+
 // M3 screw bolt circle 32mm diameter
 module neo_550_bolt_circle() {
 	bolt_circle(num_bolts = 6, circle_radius = 32 / 2, hole_diameter = 3.25, hole_height = 10);
@@ -40,11 +53,14 @@ module neo() {
 	}
 }
 
-module raw_brick() {
+RAW_BRICK_HEIGHT = 51;
+
+module raw_brick(h) {
 	difference() {
 		union() {
 			translate([0, 0, 0]) rotate([0, 0, 0]) {
-				create_grid(size=[80,80,4],SW=10,wall=4);
+				*create_grid(size=[80,80,4],SW=10,wall=4);
+				cube([45.75, 80, h], center = true);
 			}
 		}
 		union() {
@@ -53,13 +69,36 @@ module raw_brick() {
 	}
 }
 
+module attach_fulcrum() {
+	difference() {
+		union() {
+			hex_end(45.75);
+		}
+		union() {
+			translate([0, 6, 0]) rotate([0, 0, 0]) {
+				scale(1.01)hex_end(12);
+			}
+			translate([0, 0, 0]) rotate([90, 90, 0]) {
+				hex_half_hole(h = 50);
+			}
+		}
+	}
+}
+
 module lj2() {
 	difference() {
 		union() {
-			raw_brick();
+			translate([0, 0, 0]) rotate([0, 0, 90]) {
+				attach_fulcrum();
+			}
+			translate([0, 0, (25.5/2) + (RAW_BRICK_HEIGHT/2)]) rotate([0, 0, 0]) {
+				raw_brick(RAW_BRICK_HEIGHT);
+			}
 		}
 		union() {
-			
+			translate([0, 0 ,0]) rotate([0, 90, 0]) {
+				%neo_550();
+			}
 		}
 	}
 }
