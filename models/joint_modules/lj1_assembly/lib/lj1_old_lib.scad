@@ -1,4 +1,5 @@
 include <samSCAD/samstdlib.scad>
+include <hex-grid.scad>
 
 // STUPID LIB STUFF
 
@@ -66,6 +67,43 @@ module plate_raw() {
 	}
 }
 
+module SPECIAL_plate_raw() {
+	difference() {
+		union() {
+			translate([0, 0, 8 / 2]) {
+				create_grid(size=[191,51,8],SW=10,wall=3);
+			}
+			translate([0, (51/2) - (15/2), (8 / 2)]) {
+				cube([191, 15, 8], center = true);
+			}
+			translate([0, -(51/2) + (15/2) , (8 / 2)]) {
+				cube([191, 15, 8], center = true);
+			}
+
+			translate([(191/2) - (51/2) - 6, 0, (8 / 2)]) {
+				cube([20, 51, 8], center = true);
+			}
+
+			translate([-14.5, 0, (8 / 2)]) {
+				cube([10, 51, 8], center = true);
+			}
+		}
+
+		translate([191 / 2, 0, 0]) { // breaks if its 191. which should be correct. fuck.
+			hex_end();
+		}
+		translate([-(191 / 2), 0, -0.1]) {
+			*scale(1)hex_end();
+		}
+	}
+	translate([191 / 2, 0, 0]) {
+		hex_end();
+	}
+	translate([-(191 / 2), 0, 0]) {
+		scale(1)hex_end();
+	}
+}
+
 module plate_hex_ends() {
 	difference() {
 		plate_raw();
@@ -77,6 +115,21 @@ module plate_hex_ends() {
 		}
 	}
 }
+
+// HERE line 81
+
+module SPECIAL_plate_hex_ends() {
+	difference() {
+		SPECIAL_plate_raw();
+		translate([-(191 / 2), 0, 0]) {
+			*hex_half_hole(h = 16.1);
+		}
+		translate([(191 / 2) /*fuckity*/ - (14.2) + 3/*unfuckity*/, 0, 8]) rotate([180, 0, 0]) {
+			bearing_diff();
+		}
+	}
+}
+
 
 module small_neo_pocket() {
 	translate([0, 0, 1 / 2]) {
@@ -335,7 +388,12 @@ module neo_side() {
 				yet_another_lazy_helper_function();
 				translate([-191/2, 0, -(7.9999*6) + 0.6]) {
 					difference() {
-						three_hex_ends();
+						union() {
+							three_hex_ends();
+							translate([0, 0, -(7.9999) + 0.6]) {
+									three_hex_ends();
+							}
+						}
 						hex_half_hole(h = 125);
 					}
 				}
@@ -368,7 +426,7 @@ module neo_side() {
 
 module bearing_side_helper() {
 	difference() {
-		plate_hex_ends();
+		SPECIAL_plate_hex_ends();
 	}
 }
 

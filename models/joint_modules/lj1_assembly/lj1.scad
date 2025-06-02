@@ -86,23 +86,21 @@ module neo_side_diff_triangles() {
 			difference() {
 				translate([0, 0, 0]) rotate([0, 0, 0]) {
 					translate([0, 0, 0]) {
-						scale(0.99)cube([51, 51, 18], center = true);
+						scale(0.99)cube([54, 54, 18], center = true);
 					}
 				}
 				union() {
 					translate([-51/2, -51/2, -18/2]) rotate([0, 0, 0]) {
-						ramp(51, 51/2, 18);
+						ramp(51, 54/2, 18);
 					}
 					translate([-51/2, 51/2, 18/2]) rotate([180, 0, 0]) {
-						ramp(51, 51/2, 18);
+						ramp(51, 54/2, 18);
 					}
 				}
 			}
 		}
 	}
 }
-
-translate([0, 80, 0]) rotate([0, 0, 90]) neo_side_diff_triangles();
 
 module final_everything() {
 	difference() {
@@ -121,6 +119,8 @@ module final_everything() {
 			translate([-191/2, -46.75/2, 51/2]) rotate([90, 0, 0]) {
 				three_hex_ends();
 			}
+			translate([(-191/2) + 60/2, (-18/2) - (46.75/2), 51/2]) rotate([90, 0, 0]) neo_side_diff_triangles();
+			translate([(-191/2) + 50/2, (-18/2) - (46.75/2), 51/2]) rotate([90, 0, 0]) neo_side_diff_triangles();
 		}
 	}
 }
