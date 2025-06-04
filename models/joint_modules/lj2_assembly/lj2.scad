@@ -89,14 +89,48 @@ module attach_fulcrum() {
 module FUCK() {
 	translate([0, -1.3, 25.5/2]) rotate([0, 0, 0]) {
 	
-		translate([0, 0, 0]) rotate([0, 0, 0]) {
-			create_grid(size=[45.75,50 - 3,4],SW=10,wall=4);
+		translate([0, +36, 0]) rotate([0, 0, 0]) {
+			*create_grid(size=[45.75,50 - 3,4],SW=10,wall=4);
+			cube([45.75, 25, 4], center = true);
 		}
+
+		translate([0, +(75-50)/2, 50 - 4]) rotate([0, 0, 0]) {
+			*create_grid(size=[45.75,50 - 3,4],SW=10,wall=4);
+			cube([45.75, 75 - 3, 4], center = true);
+		}
+
+		translate([(45/2) - 3/2, +(75-50)/2, 24]) rotate([0, 90, 0]) {
+			create_grid(size=[47.75, 75 - 3,4],SW=10,wall=4);
+		}
+
+		translate([-(45/2) + (3/2), +(75-50)/2, 24]) rotate([0, 90, 0]) {
+			create_grid(size=[47.75,75 - 3,4],SW=10,wall=4);
+		}
+
+		translate([-45.75/2, (51/2) - 2.3, 0]) rotate([0, 90, 0]) {
+			ramp(25.5, 25.5, 45.75);
+		}
+
+
 		translate([0, (-50/2) + 3, 25.5 - 2.5]) rotate([90, 0, 0]) {
 			*create_grid(size=[45.75,50,4],SW=10,wall=4);
-			cube([45.75, 50, 4], center = true);
+			difference() {
+				cube([45.75, 50, 4], center = true);
+				translate([0, 0, -5])neo_550_bolt_circle();
+			}
 		}
 		
+	}
+}
+
+module neo_mount_plate() {
+	difference() {
+		union() {
+			FUCK();
+		}
+		union() {
+			
+		}
 	}
 }
 
@@ -111,12 +145,16 @@ module lj2() {
 			}
 			translate([0, 0, 0]) rotate([0, 0, 0]) {
 				// fskejfnskejn				
-				FUCK();
+				neo_mount_plate();
 			}
 		}
 		union() {
 			translate([0, 46 + (43/2), (43.301/2) + (51/2) - (25.5/2)]) rotate([90, 90, 0]) {
-				%neo_550();
+				scale([1.008, 1.008, 1])neo_550();
+			}
+			translate([0, 46 + (43/2)+ 35, (43.301/2) + (51/2) - (25.5/2)]) rotate([90, 90, 0]) {
+			
+				scale([1.008, 1.008, 1.1])neo_550();
 			}
 		}
 	}
