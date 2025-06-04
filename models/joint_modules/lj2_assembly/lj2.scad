@@ -61,6 +61,7 @@ module raw_brick(h) {
 			translate([0, 0, 0]) rotate([0, 0, 0]) {
 				*create_grid(size=[80,80,4],SW=10,wall=4);
 				cube([45.75, 80, h], center = true);
+				*rotate([90, 0, 0])		cylinder(h=46, r = 45.75/2);
 			}
 		}
 		union() {
@@ -85,6 +86,20 @@ module attach_fulcrum() {
 	}
 }
 
+module FUCK() {
+	translate([0, -1.3, 25.5/2]) rotate([0, 0, 0]) {
+	
+		translate([0, 0, 0]) rotate([0, 0, 0]) {
+			create_grid(size=[45.75,50 - 3,4],SW=10,wall=4);
+		}
+		translate([0, (-50/2) + 3, 25.5 - 2.5]) rotate([90, 0, 0]) {
+			*create_grid(size=[45.75,50,4],SW=10,wall=4);
+			cube([45.75, 50, 4], center = true);
+		}
+		
+	}
+}
+
 module lj2() {
 	difference() {
 		union() {
@@ -92,11 +107,15 @@ module lj2() {
 				attach_fulcrum();
 			}
 			translate([0, 0, (25.5/2) + (RAW_BRICK_HEIGHT/2)]) rotate([0, 0, 0]) {
-				raw_brick(RAW_BRICK_HEIGHT);
+				*raw_brick(RAW_BRICK_HEIGHT);
+			}
+			translate([0, 0, 0]) rotate([0, 0, 0]) {
+				// fskejfnskejn				
+				FUCK();
 			}
 		}
 		union() {
-			translate([0, 0 ,0]) rotate([0, 90, 0]) {
+			translate([0, 46 + (43/2), (43.301/2) + (51/2) - (25.5/2)]) rotate([90, 90, 0]) {
 				%neo_550();
 			}
 		}

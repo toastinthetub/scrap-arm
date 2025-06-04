@@ -20,7 +20,7 @@ module bearing_diff() {
 // M3 screw bolt circle 32mm diameter
 module neo_550_bolt_circle() {
 	// big holes
-	translate([0, 0, 0]) union() {
+	%translate([0, 0, 0]) union() {
 		translate([0, 0, 0]) {
 			bolt_circle(num_bolts = 6, circle_radius = 32 / 2, hole_diameter = 3.32, hole_height = 20);
 		}
